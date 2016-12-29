@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+
 
 /**
  * Created by whn on 2016/12/3.
@@ -19,6 +21,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fresco.initialize(this);
 
         //获取主线程id
         handler = new Handler();

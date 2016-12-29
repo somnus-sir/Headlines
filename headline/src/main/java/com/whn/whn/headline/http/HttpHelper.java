@@ -37,8 +37,9 @@ public class HttpHelper {
         int cacheSize = 10 * 1024 * 1024;
         File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "cache");
         okhttp = new OkHttpClient.Builder()
-                .readTimeout(15, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .connectTimeout(5, TimeUnit.SECONDS)
                 .cache(new Cache(file, cacheSize))//设置数据缓存的
                 .addNetworkInterceptor(new CacheInterceptor())//设置缓存
                 .build();
@@ -54,9 +55,9 @@ public class HttpHelper {
 
             Response originResponse = chain.proceed(chain.request());
 
-            //设置缓存时间为60秒，并移除了pragma消息头，移除它的原因是因为pragma也是控制缓存的一个消息头属性
+            //设置缓存时间为600秒，并移除了pragma消息头，移除它的原因是因为pragma也是控制缓存的一个消息头属性
             return originResponse.newBuilder().removeHeader("pragma")
-                    .header("Cache-Control","max-age=60").build();
+                    .header("Cache-Control","max-age=600").build();
         }
     }
 

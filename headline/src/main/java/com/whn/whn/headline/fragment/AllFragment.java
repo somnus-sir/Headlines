@@ -1,5 +1,6 @@
 package com.whn.whn.headline.fragment;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,17 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-import com.lidroid.xutils.BitmapUtils;
 import com.whn.whn.headline.DetailActivity;
 import com.whn.whn.headline.R;
 import com.whn.whn.headline.bean.ReceivedInfo;
@@ -37,6 +36,8 @@ public class AllFragment extends Fragment {
     private PullToRefreshListView ptfListView;
     public ReceivedInfo resultInfo;
     private DetailAdapter detailAdapter;
+    private Dialog progressDialog;
+    private RelativeLayout failView;
 
     public AllFragment(String type) {
         this.type = type;
@@ -51,6 +52,7 @@ public class AllFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = View.inflate(getContext(), R.layout.layout_listview, null);
         ptfListView = (PullToRefreshListView) view.findViewById(R.id.ptfListView);
+        failView = (RelativeLayout) view.findViewById(R.id.loadfail);
 
         //携带url 跳转详情界面
         ptfListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -72,12 +74,12 @@ public class AllFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        requestData();
+        requestData();//请求数据
+
         //下拉刷新重新请求数据
         ptfListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-//                requestData1();
                 requestData();
             }
 
@@ -86,8 +88,8 @@ public class AllFragment extends Fragment {
 
             }
         });
-
     }
+
 
 
 
@@ -123,7 +125,7 @@ public class AllFragment extends Fragment {
                 viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.iv_title);
                 viewHolder.tvAuthor = (TextView) convertView.findViewById(R.id.tv_author);
                 viewHolder.tvTime = (TextView) convertView.findViewById(R.id.tv_time);
-                viewHolder.ivPic = (ImageView) convertView.findViewById(R.id.iv_pic);
+                viewHolder.ivPic = (SimpleDraweeView) convertView.findViewById(R.id.iv_pic);
                 convertView.setTag(viewHolder);
             }else{
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -134,8 +136,7 @@ public class AllFragment extends Fragment {
             viewHolder.tvAuthor.setText(dataEntity.author_name);
             viewHolder.tvTime.setText(dataEntity.date);
 
-            BitmapUtils bitmapUtils = new BitmapUtils(getContext());
-            bitmapUtils.display(viewHolder.ivPic,dataEntity.thumbnail_pic_s);
+            viewHolder.ivPic.setImageURI(dataEntity.thumbnail_pic_s);
 
             return convertView;
         }
@@ -145,8 +146,7 @@ public class AllFragment extends Fragment {
         TextView tvTitle;
         TextView tvAuthor;
         TextView tvTime;
-        ImageView ivPic;
-
+        SimpleDraweeView ivPic;
     }
 
 
@@ -165,6 +165,7 @@ public class AllFragment extends Fragment {
                 detailAdapter = new DetailAdapter();
                 ptfListView.setAdapter(detailAdapter);
                 ptfListView.onRefreshComplete();
+                failView.setVisibility(View.GONE);
             }
 
             @Override
@@ -175,33 +176,4 @@ public class AllFragment extends Fragment {
             }
         });
     }
-
-    /**
-     * 请求数据
-     */
-    private void requestData1() {
-        Ion.with(this)
-                .load(url)
-                .asString()//以字符串形式返回,服务器返回的都是流，只是类库将流转为字符串了
-                .setCallback(new FutureCallback<String>() {
-                    @Override
-                    public void onCompleted(Exception e, String result) {
-                        if(e==null){
-                            //可以更新UI
-                            Gson gson = new Gson();
-                            resultInfo = gson.fromJson(result, ReceivedInfo.class);
-                            //数据展示
-                            detailAdapter = new DetailAdapter();
-                            ptfListView.setAdapter(detailAdapter);
-                            ptfListView.onRefreshComplete();
-                        }else{
-                            e.printStackTrace();
-                            Toast.makeText(getContext(), "网络异常", Toast.LENGTH_SHORT).show();
-                            ptfListView.onRefreshComplete();
-                        }
-                    }
-                });//设置接收结果的回调接口
-    }
-
-
 }
