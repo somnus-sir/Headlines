@@ -63,27 +63,16 @@ public class AllFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //点击之后颜色变灰
                 TextView ivTitle = (TextView) view.findViewById(R.id.iv_title);
-
-                //取出原来的数据uniquekey
                 String urlkeys = SPUtils.getString(getContext(), Iconstants.ISREAD_ID, ",");
-
-                //取出当前的数据的uniquekey
-//                ReceivedInfo.ResultEntity.DataEntity itemAtPosition = (ReceivedInfo.ResultEntity.DataEntity) parent.getItemAtPosition(position);
-//                String itemUniquekey = itemAtPosition.uniquekey;
-
-                ReceivedInfo.ResultEntity.DataEntity dataEntity = resultInfo.result.data.get(position);
+                ReceivedInfo.ResultEntity.DataEntity dataEntity = resultInfo.result.data.get(position-1);
                 String urlkey = dataEntity.url;
 
-                //如果不包含当前点击的数据就添加进去
+                //如果不包含当前点击的数据就添加
                 if(!urlkeys.contains(","+urlkey+",")){
                     urlkeys = urlkeys+urlkey+",";
                     SPUtils.putString(getContext(),Iconstants.ISREAD_ID,urlkeys);
                     ivTitle.setTextColor(Color.GRAY);
                 }
-
-
-
-
 
                 //携带数据跳转
                 String url = resultInfo.result.data.get(position-1).url;
@@ -117,8 +106,6 @@ public class AllFragment extends Fragment {
             }
         });
     }
-
-
 
 
     /**
