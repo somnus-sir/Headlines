@@ -2,6 +2,7 @@ package com.whn.whn.headline.fragment;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -23,6 +24,8 @@ import com.whn.whn.headline.DetailActivity;
 import com.whn.whn.headline.R;
 import com.whn.whn.headline.bean.ReceivedInfo;
 import com.whn.whn.headline.http.HttpHelper;
+import com.whn.whn.headline.interface_constants.Iconstants;
+import com.whn.whn.headline.utils.SPUtils;
 
 /**
  * Created by whn on 2016/12/23.
@@ -58,6 +61,31 @@ public class AllFragment extends Fragment {
         ptfListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //点击之后颜色变灰
+                TextView ivTitle = (TextView) view.findViewById(R.id.iv_title);
+
+                //取出原来的数据uniquekey
+                String urlkeys = SPUtils.getString(getContext(), Iconstants.ISREAD_ID, ",");
+
+                //取出当前的数据的uniquekey
+//                ReceivedInfo.ResultEntity.DataEntity itemAtPosition = (ReceivedInfo.ResultEntity.DataEntity) parent.getItemAtPosition(position);
+//                String itemUniquekey = itemAtPosition.uniquekey;
+
+                ReceivedInfo.ResultEntity.DataEntity dataEntity = resultInfo.result.data.get(position);
+                String urlkey = dataEntity.url;
+
+                //如果不包含当前点击的数据就添加进去
+                if(!urlkeys.contains(","+urlkey+",")){
+                    urlkeys = urlkeys+urlkey+",";
+                    SPUtils.putString(getContext(),Iconstants.ISREAD_ID,urlkeys);
+                    ivTitle.setTextColor(Color.GRAY);
+                }
+
+
+
+
+
+                //携带数据跳转
                 String url = resultInfo.result.data.get(position-1).url;
                 Intent intent = new Intent(getContext(), DetailActivity.class);
                 intent.putExtra("url",url);
@@ -135,8 +163,14 @@ public class AllFragment extends Fragment {
             viewHolder.tvTitle.setText(dataEntity.title);
             viewHolder.tvAuthor.setText(dataEntity.author_name);
             viewHolder.tvTime.setText(dataEntity.date);
-
             viewHolder.ivPic.setImageURI(dataEntity.thumbnail_pic_s);
+
+            String urlkeys = SPUtils.getString(getContext(), Iconstants.ISREAD_ID, "");
+            if (urlkeys.contains(","+dataEntity.url+",")){
+                viewHolder.tvTitle.setTextColor(Color.GRAY);
+            } else {
+                viewHolder.tvTitle.setTextColor(Color.rgb(60,60,60));
+            }
 
             return convertView;
         }
