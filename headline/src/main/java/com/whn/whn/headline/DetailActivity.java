@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -31,17 +30,12 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String url = intent.getStringExtra("url");
 
+        // 启用javascript
+        wbDetail.getSettings().setJavaScriptEnabled(true);
 
         //设置内容
         wbDetail.loadUrl(url);
 
-        //防止跳转浏览器
-        wbDetail.setWebViewClient(new WebViewClient(){
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url){
-                return false;
-            }
-        });
 
         //WebView监听返回键
         wbDetail.setOnKeyListener(new View.OnKeyListener() {
