@@ -44,10 +44,6 @@ public class MainActivity extends AppCompatActivity {
 
         //关联指针
         tabLayout.setupWithViewPager(vp);
-
-
-//        requestData();//请求数据
-
     }
 
     /**

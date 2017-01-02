@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HeadLine</string>
+    <string name="app_name">头条新闻</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_show_web_image">ShowWebImageActivity</string>
 </resources>

@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:background="#40AA53"
         app:tabMode = "scrollable"
-        android:layout_height="55dp">
+        android:layout_height="50dp">
     </android.support.v7.widget.Toolbar>
 
     <WebView
