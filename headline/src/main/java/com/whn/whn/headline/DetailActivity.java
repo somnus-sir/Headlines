@@ -7,18 +7,46 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class DetailActivity extends AppCompatActivity {
 
-    private WebView wbDetail;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.wb_detail)
+    WebView wbDetail;
+    @Bind(R.id.container_detail)
+    LinearLayout containerDetail;
+    @Bind(R.id.iv_load_detail)
+    ImageView ivLoadDetail;
+    private RotateAnimation ra;
+    private LinearInterpolator linearInterpolator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        wbDetail = (WebView) findViewById(R.id.wb_detail);
+        ButterKnife.bind(this);
+
+        //加载中动画
+        if (ra == null) {
+            ra = new RotateAnimation(0, 2160, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        }
+        if (linearInterpolator == null) {
+            linearInterpolator = new LinearInterpolator();
+        }
+        ra.setInterpolator(linearInterpolator);
+        ra.setDuration(6000);
+        ivLoadDetail.startAnimation(ra);
 
 
         //设置toolBar
@@ -35,6 +63,14 @@ public class DetailActivity extends AppCompatActivity {
 
         //设置内容
         wbDetail.loadUrl(url);
+        wbDetail.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                ivLoadDetail.setVisibility(View.GONE);
+                containerDetail.setVisibility(View.VISIBLE);
+            }
+        });
 
 
         //WebView监听返回键
@@ -51,6 +87,8 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     @Override
     protected void onDestroy() {

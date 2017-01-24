@@ -1,26 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.whn.whn.headline.MainActivity">
-
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:background="#40AA53"
-        app:tabMode = "scrollable"
-        android:layout_height="50dp">
-    </android.support.v7.widget.Toolbar>
+        app:tabMode="scrollable"></android.support.v7.widget.Toolbar>
 
-    <WebView
+    <LinearLayout
+        android:id="@+id/container_detail"
         android:layout_width="match_parent"
-        android:id="@+id/wb_detail"
-        android:layout_height="match_parent"></WebView>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:orientation="vertical"
+        android:visibility="invisible">
 
 
-</LinearLayout>
+        <WebView
+            android:id="@+id/wb_detail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></WebView>
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/iv_load_detail"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerInParent="true"
+        android:src="@mipmap/loading" />
+
+
+</RelativeLayout>
